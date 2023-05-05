@@ -19,5 +19,65 @@ public class Recordings {
     private String format;
     private String filePath;
     private Long duration;
+    private byte[] bytes;
 
+    public Recordings(long id, String name, String format, String filePath, Long duration, byte[] bytes) {
+        this.id = id;
+        this.name = name;
+        this.format = format;
+        this.filePath = filePath;
+        this.duration = duration;
+        this.bytes = bytes;
+    }
+
+    public Recordings() {
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public Long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Long duration) {
+        this.duration = duration;
+    }
+
+    public byte[] getBytes() {
+        return bytes;
+    }
+
+    public void setBytes(byte[] bytes) {
+        this.bytes = bytes;
+    }
 }
