@@ -21,17 +21,7 @@ public class Recordings {
     private Long duration;
     private byte[] bytes;
 
-    public Recordings(long id, String name, String format, String filePath, Long duration, byte[] bytes) {
-        this.id = id;
-        this.name = name;
-        this.format = format;
-        this.filePath = filePath;
-        this.duration = duration;
-        this.bytes = bytes;
-    }
 
-    public Recordings() {
-    }
 
     public long getId() {
         return id;
