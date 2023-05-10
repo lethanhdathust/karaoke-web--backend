@@ -2,7 +2,9 @@ package com.programming.karaoke.controller;
 
 import com.programming.karaoke.model.Recordings;
 import com.programming.karaoke.repository.RecordingRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import jdk.jfr.Recording;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -20,13 +22,22 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/recordings")
+@Slf4j
 public class RecordController {
 
     @Autowired
     private RecordingRepository recordingRepository;
 
-    @PostMapping
+    @GetMapping("/testData")
+    public String testData(HttpServletRequest request){
+        log.info("[testData] da truy cap thanh cong {}", request.getHeader("thuoctinha"));
+
+        return "";
+    }
+
+    @PostMapping("/createRecording")
     public ResponseEntity<?> createRecording(@RequestParam("file")MultipartFile file, @Value("${fileDir}") String fileDir) {
+        log.info("[createRecording] fileDir {}", fileDir);
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file.getInputStream());
             AudioFormat format = audioInputStream.getFormat();

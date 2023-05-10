@@ -1,20 +1,22 @@
 package com.programming.karaoke.service;
 
+import com.google.gson.Gson;
 import com.programming.karaoke.model.Video;
 import com.programming.karaoke.model.VideoDto;
 import com.programming.karaoke.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.mongodb.core.ExecutableFindOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.modelmapper.ModelMapper;
 
 @RequiredArgsConstructor
 @Service
@@ -25,7 +27,7 @@ private final VideoRepository videoRepository;
 
   public  VideoDto editVideo(VideoDto videoDto) {
 //    Find the video by video
-  var savedVideo =  videoRepository.findById(videoDto.getId()).orElseThrow(() -> new IllegalArgumentException("Cannot find video by id -"+ videoDto.getId()));
+    var savedVideo =  videoRepository.findById(videoDto.getId()).orElseThrow(() -> new IllegalArgumentException("Cannot find video by id -"+ videoDto.getId()));
 //    Map the videoDto field to video
     savedVideo.setTitle(videoDto.getTitle());
     savedVideo.setDescription(videoDto.getDescription());
@@ -70,12 +72,21 @@ public VideoDto saveVideo(VideoDto videoDto, String id){
 
         // Use the criteria to create a query and execute it against the videoRepository
         Query query = new Query(criteria);
-        List<Video> matchingVideos = mongoTemplate.find(query, Video.class);
+        List<Video> matchingVideos = null;
 
-        // Convert the Video objects to VideoDto objects and return them
-        return matchingVideos.stream()
-                .map(video -> modelMapper.map(video, VideoDto.class))
-                .collect(Collectors.toList());
+    //        // Convert the Video objects to VideoDto objects and return them
+    //        return matchingVideos.stream()
+    //                .map(video -> modelMapper.map(video, VideoDto.class))
+    //                .collect(Collectors.toList());
+
+        Gson gson= new Gson();
+        List<VideoDto> returnedVideoDto = new ArrayList<>();
+        for (Video v : matchingVideos){
+            String tmp = gson.toJson(v);
+            VideoDto vNew = gson.fromJson(tmp,VideoDto.class);
+            returnedVideoDto.add(vNew);
+        }
+        return returnedVideoDto;
     }
 
 

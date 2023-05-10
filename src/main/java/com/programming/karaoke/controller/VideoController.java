@@ -37,7 +37,8 @@ public class VideoController {
             @RequestParam(value = "description", required = false) String description,
             @RequestParam(value = "tag", required = false) String tag
       ) {
-        List<VideoDto> matchingVidoes = (List<VideoDto>) videoServices.saveVideo(title,description,tag);
+        VideoDto videoDto = null;
+        List<VideoDto> matchingVidoes = (List<VideoDto>) videoServices.saveVideo(videoDto,tag);
         return matchingVidoes;
       }
 }
