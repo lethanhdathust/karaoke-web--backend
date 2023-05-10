@@ -4,10 +4,15 @@ import com.programming.karaoke.model.Video;
 import com.programming.karaoke.model.VideoDto;
 import com.programming.karaoke.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.mongodb.core.query.Criteria;
+
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -44,4 +49,30 @@ public VideoDto saveVideo(VideoDto videoDto, String id){
 
 
 }
+
+    public List<VideoDto> searchVideos(String title, String description, String tag) {
+        // Build a criteria object based on the search parameters
+        Criteria criteria = new Criteria();
+
+        if (title != null) {
+            criteria.and("title").regex(title);
+        }
+
+        if (description != null) {
+            criteria.and("description").regex(description);
+        }
+
+        if (tag != null) {
+            criteria.and("tags").is(tag);
+        }
+
+        // Use the criteria to create a query and execute it against the videoRepository
+        Query query = new Query(criteria);
+        List<Video> matchingVideos = mongoTemplate.find(query, Video.class);
+
+        // Convert the Video objects to VideoDto objects and return them
+        return matchingVideos.stream()
+                .map(video -> modelMapper.map(video, VideoDto.class))
+                .collect(Collectors.toList());
+    }
 }
