@@ -13,16 +13,16 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("api/")
+@RequestMapping("api/videos")
 public class VideoController {
     private final VideoServices videoServices;
-    @PostMapping
+    @PostMapping("/post")
     @ResponseStatus(HttpStatus.CREATED)
     public void uploadVideo(@RequestParam("file")MultipartFile file)
     {
         videoServices.uploadVideo(file);
     }
-    @PutMapping()
+    @PutMapping("/edit")
       @ResponseStatus(HttpStatus.OK)
       public VideoDto editVideoMetadata(@RequestBody VideoDto videoDto){
 

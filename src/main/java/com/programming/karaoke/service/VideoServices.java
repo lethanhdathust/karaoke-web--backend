@@ -43,12 +43,12 @@ public VideoDto saveVideo(VideoDto videoDto, String id){
   return videoDto;
 }
   public void uploadVideo(MultipartFile multipartFile){
-//    Upload file to aws s3
+
+      //Upload file to aws s3
    String videoUrl= s3Service.uploadFile(multipartFile);
    //Sau khi upload video lên aws , set url cho video ,rồi lưu vào database
    var video = new Video();
    video.setUrl(videoUrl);
-
    videoRepository.save(video);
 
 

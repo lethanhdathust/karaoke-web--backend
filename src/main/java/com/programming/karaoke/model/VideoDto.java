@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 //  chứa tất cả các thuộc tính của lớp đối tượng.
 @AllArgsConstructor
 public class VideoDto {
-  private  String id;
+  private String id;
   private String title;
   private String description;
   private String userId;

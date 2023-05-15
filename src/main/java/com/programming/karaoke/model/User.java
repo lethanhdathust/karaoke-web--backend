@@ -24,9 +24,9 @@ public class User {
     private String lastName;
     private String fullName;
     private String emailAddress;
-    private Set<String> subcriedToUser;
-    private Set<String> subcribers;
+    private Set<String> subscribedToUser;
+    private Set<String> subscribers;
     private List<String> videoHistory;
     private Set<String> likedVideos;
-    private  Set<String> dislikeEdVideo;
+    private Set<String> dislikeEdVideo;
 }
