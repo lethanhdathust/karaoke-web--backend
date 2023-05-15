@@ -54,39 +54,9 @@ public VideoDto saveVideo(VideoDto videoDto, String id){
 
 }
 
-    public List<VideoDto> searchVideos(String title, String description, String tag) {
-        // Build a criteria object based on the search parameters
-        Criteria criteria = new Criteria();
+    public List<Video> searchVideo(String query) {
 
-        if (title != null) {
-            criteria.and("title").regex(title);
-        }
-
-        if (description != null) {
-            criteria.and("description").regex(description);
-        }
-
-        if (tag != null) {
-            criteria.and("tags").is(tag);
-        }
-
-        // Use the criteria to create a query and execute it against the videoRepository
-        Query query = new Query(criteria);
-        List<Video> matchingVideos = null;
-
-    //        // Convert the Video objects to VideoDto objects and return them
-    //        return matchingVideos.stream()
-    //                .map(video -> modelMapper.map(video, VideoDto.class))
-    //                .collect(Collectors.toList());
-
-        Gson gson= new Gson();
-        List<VideoDto> returnedVideoDto = new ArrayList<>();
-        for (Video v : matchingVideos){
-            String tmp = gson.toJson(v);
-            VideoDto vNew = gson.fromJson(tmp,VideoDto.class);
-            returnedVideoDto.add(vNew);
-        }
-        return returnedVideoDto;
+        return videoRepository.search(query, query, query);
     }
 
 

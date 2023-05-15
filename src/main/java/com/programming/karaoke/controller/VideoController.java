@@ -1,11 +1,13 @@
 package com.programming.karaoke.controller;
 
 
+import com.programming.karaoke.model.Video;
 import com.programming.karaoke.model.VideoDto;
 import com.programming.karaoke.service.VideoServices;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.repository.Update;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,14 +33,10 @@ public class VideoController {
   //      return videoDto;
       }
 
-      @GetMapping("search")
-    public List<VideoDto> searchVideos(
-            @RequestParam(value = "title", required = false) String title,
-            @RequestParam(value = "description", required = false) String description,
-            @RequestParam(value = "tag", required = false) String tag
-      ) {
-        VideoDto videoDto = null;
-        List<VideoDto> matchingVidoes = (List<VideoDto>) videoServices.saveVideo(videoDto,tag);
-        return matchingVidoes;
+      @GetMapping("/search")
+    public ResponseEntity<List<Video>> searchVideos(@RequestParam("q") String query) {
+        List<Video> videos = videoServices.searchVideo(query);
+        return ResponseEntity.ok(videos);
       }
+
 }
