@@ -16,17 +16,19 @@ import java.util.Set;
 @NoArgsConstructor
 //@AllArgsConstructor sẽ tự động tạo ra một constructor
 //  chứa tất cả các thuộc tính của lớp đối tượng.
+
 @AllArgsConstructor
 public class User {
     @Id
     private String id;
-    private String firstName;
-    private String lastName;
+//    private String firstName;
+//    private String lastName;
     private String fullName;
     private String emailAddress;
-    private Set<String> subscribedToUser;
-    private Set<String> subscribers;
-    private List<String> videoHistory;
-    private Set<String> likedVideos;
-    private Set<String> dislikeEdVideo;
+    private String telephoneNumber;
+//    private Set<String> subscribedToUser;
+//    private Set<String> subscribers;
+//    private List<String> videoHistory;
+//    private Set<String> likedVideos;
+//    private Set<String> dislikeEdVideo;
 }

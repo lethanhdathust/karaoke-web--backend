@@ -56,7 +56,8 @@ public VideoDto saveVideo(VideoDto videoDto, String id){
 
     public List<Video> searchVideo(String query) {
 
-        return videoRepository.search(query, query, query);
+      return videoRepository.findByTitle(query);
+//        return videoRepository.search(query, query, query);
     }
 
 
