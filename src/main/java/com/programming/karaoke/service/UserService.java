@@ -1,6 +1,6 @@
 package com.programming.karaoke.service;
 
-import com.programming.karaoke.model.User;
+import com.programming.karaoke.model.user.User;
 import com.programming.karaoke.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
