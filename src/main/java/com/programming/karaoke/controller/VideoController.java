@@ -33,10 +33,11 @@ public class VideoController {
   //      return videoDto;
       }
 
-      @GetMapping("/search")
-    public ResponseEntity<List<Video>> searchVideos(@RequestParam("q") String query) {
-        List<Video> videos = videoServices.searchVideo(query);
-        return ResponseEntity.ok(videos);
-      }
+    @GetMapping("/search")
+    public ResponseEntity<List<Video>> search(@RequestParam String query) {
+        List<Video> videos = videoServices.search(query);
+        return new ResponseEntity<>(videos, HttpStatus.OK);
+    }
+
 
 }

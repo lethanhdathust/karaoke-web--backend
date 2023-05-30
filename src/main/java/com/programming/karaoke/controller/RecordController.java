@@ -36,6 +36,50 @@ public class RecordController {
         return "";
     }
 
+
+@PostMapping("/createRecording")
+public ResponseEntity<?> createRecording(@RequestParam("file")MultipartFile file, @Value("${fileDir}") String fileDir) {
+    log.info("[createRecording] fileDir {}", fileDir);
+    try {
+        Recordings recordings = recordService.createRecording(file);
+        return ResponseEntity.ok().build();
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+}
+
+    @GetMapping("/{id}/play")
+    public ResponseEntity<byte[]> playRecording(@PathVariable("id") String id) {
+        Optional<Recordings> optionalRecordings = recordService.getRecordingById(Long.valueOf(id));
+        if (optionalRecordings.isPresent()) {
+            Recordings recordings = optionalRecordings.get();
+            try {
+                byte[] bytes = recordService.getRecordingBytes(recordings);
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+                headers.setContentDisposition(ContentDisposition.builder("attachment").filename(recordings.getName()).build());
+                return  new ResponseEntity<>(bytes, headers, HttpStatus.OK);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        }
+        else {
+            return ResponseEntity.notFound().build();
+          }
+    }
+
+    @DeleteMapping("{id}/delete")
+    public ResponseEntity<?> deleteRecording(@PathVariable("id") String id) {
+        try {
+            recordService.deleteRecordingById(Long.valueOf(id));
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+}
+
+
 //    @PostMapping("/createRecording")
 //    public ResponseEntity<?> createRecording(@RequestParam("file")MultipartFile file, @Value("${fileDir}") String fileDir) {
 //        log.info("[createRecording] fileDir {}", fileDir);
@@ -90,45 +134,3 @@ public class RecordController {
 //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 //        }
 //    }
-@PostMapping("/createRecording")
-public ResponseEntity<?> createRecording(@RequestParam("file")MultipartFile file, @Value("${fileDir}") String fileDir) {
-    log.info("[createRecording] fileDir {}", fileDir);
-    try {
-        Recordings recordings = recordService.createRecording(file);
-        return ResponseEntity.ok().build();
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
-}
-
-    @GetMapping("/{id}/play")
-    public ResponseEntity<byte[]> playRecording(@PathVariable("id") String id) {
-        Optional<Recordings> optionalRecordings = recordService.getRecordingById(Long.valueOf(id));
-        if (optionalRecordings.isPresent()) {
-            Recordings recordings = optionalRecordings.get();
-            try {
-                byte[] bytes = recordService.getRecordingBytes(recordings);
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-                headers.setContentDisposition(ContentDisposition.builder("attachment").filename(recordings.getName()).build());
-                return  new ResponseEntity<>(bytes, headers, HttpStatus.OK);
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            }
-        }
-        else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @DeleteMapping("{id}/delete")
-    public ResponseEntity<?> deleteRecording(@PathVariable("id") String id) {
-        try {
-            recordService.deleteRecordingById(Long.valueOf(id));
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-}
-

@@ -20,15 +20,15 @@ public class Recordings {
     private String filePath;
     private Long duration;
     private byte[] bytes;
+    private String fileFormat;
 
 
-
-    public long getId() {
-        return id;
+    public String getFileFormat() {
+        return fileFormat;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setFileFormat(String fileFormat) {
+        this.fileFormat = fileFormat;
     }
 
     public String getName() {
