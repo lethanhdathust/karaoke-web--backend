@@ -1,22 +1,14 @@
 package com.programming.karaoke.service;
 
-import com.google.gson.Gson;
 import com.programming.karaoke.model.Video;
 import com.programming.karaoke.model.VideoDto;
 import com.programming.karaoke.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.mongodb.core.ExecutableFindOperation;
-import org.springframework.data.mongodb.core.query.Criteria;
 
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
 @RequiredArgsConstructor
 @Service
@@ -61,6 +53,13 @@ public VideoDto saveVideo(VideoDto videoDto, String id){
                       Criteria.where("tags").in(query)));
       return videoRepository.findAll();
     }
-
+//public UserDetailsService userDetailsService(){
+//      return new UserDetailsService() {
+//          @Override
+//          public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+//              return null;
+//          }
+//      };
+//}
 
 }

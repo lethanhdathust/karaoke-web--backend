@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 //@AllArgsConstructor sẽ tự động tạo ra một constructor
 //  chứa tất cả các thuộc tính của lớp đối tượng.
 @AllArgsConstructor
-     public class Video {
+public class Video {
     private String id;
     private String title;
     private String description;
@@ -32,4 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
     private AtomicInteger viewCount = new AtomicInteger(0);
     private String thumbnailUrl;
     private List<Comment> comments = new ArrayList<>();
+
+
+
 }
