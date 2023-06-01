@@ -9,8 +9,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Document(value = "recordings")
-@NoArgsConstructor
-@AllArgsConstructor
+
+
 public class Recordings {
 
     @Id
@@ -23,51 +23,59 @@ public class Recordings {
     private String fileFormat;
 
 
-    public String getFileFormat() {
-        return fileFormat;
-    }
-
-    public void setFileFormat(String fileFormat) {
-        this.fileFormat = fileFormat;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getFormat() {
-        return format;
-    }
-
-    public void setFormat(String format) {
-        this.format = format;
-    }
-
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
-
-    public Long getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Long duration) {
-        this.duration = duration;
-    }
-
-    public byte[] getBytes() {
-        return bytes;
-    }
-
-    public void setBytes(byte[] bytes) {
-        this.bytes = bytes;
-    }
+//    public long getId() {
+//        return id;
+//    }
+//
+//    public void setId(long id) {
+//        this.id = id;
+//    }
+//
+//    public String getFileFormat() {
+//        return fileFormat;
+//    }
+//
+//    public void setFileFormat(String fileFormat) {
+//        this.fileFormat = fileFormat;
+//    }
+//
+//    public String getName() {
+//        return name;
+//    }
+//
+//    public void setName(String name) {
+//        this.name = name;
+//    }
+//
+//    public String getFormat() {
+//        return format;
+//    }
+//
+//    public void setFormat(String format) {
+//        this.format = format;
+//    }
+//
+//    public String getFilePath() {
+//        return filePath;
+//    }
+//
+//    public void setFilePath(String filePath) {
+//        this.filePath = filePath;
+//    }
+//
+//    public Long getDuration() {
+//        return duration;
+//    }
+//
+//    public void setDuration(Long duration) {
+//        this.duration = duration;
+//    }
+//
+//    public byte[] getBytes() {
+//        return bytes;
+//    }
+//
+//    public void setBytes(byte[] bytes) {
+//        this.bytes = bytes;
+//    }
 }

@@ -15,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,6 +30,8 @@ public class RecordController {
 
     @Autowired
     private RecordService recordService;
+    @Autowired
+    private RecordingRepository recordingRepository;
 
     @GetMapping("/testData")
     public String testData(HttpServletRequest request){
@@ -44,6 +48,7 @@ public ResponseEntity<?> createRecording(@RequestParam("file")MultipartFile file
         Recordings recordings = recordService.createRecording(file);
         return ResponseEntity.ok().build();
     } catch (Exception e) {
+        log.error("[createRecording] Exception occurred: ", e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 }
@@ -75,6 +80,56 @@ public ResponseEntity<?> createRecording(@RequestParam("file")MultipartFile file
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    //
+    //Beautifying voice
+    //
+    @PostMapping("/{id}/beautify")
+    public ResponseEntity<?> beautifyRecording(@PathVariable("id") String id) {
+        Optional<Recordings> optionalRecordings = recordService.getRecordingById(Long.valueOf(id));
+        if (optionalRecordings.isPresent()) {
+            Recordings recordings = optionalRecordings.get();
+            try {
+                // Save the recording bytes to a temporary file
+                Path tempFile = Files.createTempFile("temp", ".wav");
+                try (InputStream inputStream = new ByteArrayInputStream(recordings.getBytes())) {
+                    Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
+                }
+
+                // Execute the Python script for voice beautification
+                String pythonScript = "AutotunePython/autotune.py"; // Update with the actual path to your modified Python script
+                String inputFile = tempFile.toString();
+                String outputFile = tempFile.getParent().resolve(tempFile.getFileName().toString().replace(".wav", "_pitch_corrected.wav")).toString();
+                String[] command = {"python", pythonScript, tempFile.toString()};
+                Process process = Runtime.getRuntime().exec(command);
+
+                // Wait for the Python script execution to complete
+                int exitCode = process.waitFor();
+                if (exitCode == 0) {
+                    // Read the beautified recording from the output file
+                    byte[] beautifiedBytes = Files.readAllBytes(Paths.get(outputFile));
+
+                    // Update the beautified recording in the database or return it as a response
+                    // Here, I'm assuming you update the recording in the database
+                    recordings.setBytes(beautifiedBytes);
+                    recordingRepository.save(recordings);
+
+                    // Delete the temporary input and output files
+                    Files.deleteIfExists(tempFile);
+                    Files.deleteIfExists(Paths.get(outputFile));
+
+                    return ResponseEntity.ok().build();
+                } else {
+                    // Handle the case when the Python script execution fails
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                }
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
 }

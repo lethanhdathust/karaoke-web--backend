@@ -46,13 +46,13 @@ public VideoDto saveVideo(VideoDto videoDto, String id){
 
 }
 
-    public List<Video> search(String query) {
-      Query searchQuery = new Query();
-      searchQuery.addCriteria(Criteria.where("title").regex(query, "i")
-              .orOperator(Criteria.where("description").regex(query, "i"),
-                      Criteria.where("tags").in(query)));
-      return videoRepository.findAll();
-    }
+//    public List<Video> search(String query) {
+//      Query searchQuery = new Query();
+//      searchQuery.addCriteria(Criteria.where("title").regex(query, "i")
+//              .orOperator(Criteria.where("description").regex(query, "i"),
+//                      Criteria.where("tags").in(query)));
+//      return videoRepository.findAll();
+//    }
 //public UserDetailsService userDetailsService(){
 //      return new UserDetailsService() {
 //          @Override
