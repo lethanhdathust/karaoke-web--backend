@@ -2,6 +2,7 @@ package com.programming.karaoke.controller;
 
 import com.programming.karaoke.model.Recordings;
 import com.programming.karaoke.repository.RecordingRepository;
+import com.programming.karaoke.service.AudioService;
 import com.programming.karaoke.service.RecordService;
 import jakarta.servlet.http.HttpServletRequest;
 import jdk.jfr.Recording;
@@ -32,6 +33,10 @@ public class RecordController {
     private RecordService recordService;
     @Autowired
     private RecordingRepository recordingRepository;
+
+    @Autowired
+    private AudioService audioService;
+
 
     @GetMapping("/testData")
     public String testData(HttpServletRequest request){
@@ -112,7 +117,7 @@ public ResponseEntity<?> createRecording(@RequestParam("file")MultipartFile file
                     byte[] beautifiedBytes = Files.readAllBytes(Paths.get(outputFile));
 
                     // Update the beautified recording in the database or return it as a response
-                    // Here, I'm assuming you update the recording in the database
+                    // update the recording in the database
                     recordings.setBytes(beautifiedBytes);
                     recordingRepository.save(recordings);
 

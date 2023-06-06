@@ -12,63 +12,63 @@ import javax.sound.sampled.*;
 import java.io.*;
 import java.util.Optional;
 
-@Service
-public class RecordService {
-    @Autowired
-    private RecordingRepository recordingRepository;
-    @Value("${fileDir}")
-    private String fileDir;
+    @Service
+    public class RecordService {
+        @Autowired
+        private RecordingRepository recordingRepository;
+        @Value("${fileDir}")
+        private String fileDir;
 
-    public Recordings createRecording(MultipartFile file) throws Exception {
-            InputStream bufferedStream = new BufferedInputStream(file.getInputStream());
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bufferedStream);
-            AudioFormat format = audioInputStream.getFormat();
-            long duration = (long) (audioInputStream.getFrameLength() / format.getFrameRate() * 1000);
-        System.out.println("Current Working Directory: " + System.getProperty("user.dir"));
+        public Recordings createRecording(MultipartFile file) throws Exception {
+                InputStream bufferedStream = new BufferedInputStream(file.getInputStream());
+                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bufferedStream);
+                AudioFormat format = audioInputStream.getFormat();
+                long duration = (long) (audioInputStream.getFrameLength() / format.getFrameRate() * 1000);
+            System.out.println("Current Working Directory: " + System.getProperty("user.dir"));
 
-        File directory = new File(fileDir);
-        if (!directory.exists()) {
-            boolean created = directory.mkdirs();
-            if (!created) {
-                throw new IllegalStateException("Failed to create the directory: " + fileDir);
+            File directory = new File(fileDir);
+            if (!directory.exists()) {
+                boolean created = directory.mkdirs();
+                if (!created) {
+                    throw new IllegalStateException("Failed to create the directory: " + fileDir);
+                }
             }
+                String name = file.getOriginalFilename();
+                byte[] bytes = file.getBytes();
+                Recordings recordings = new Recordings();
+                recordings.setName(name);
+                recordings.setFormat(String.valueOf(format));
+                recordings.setDuration(duration);
+                recordings.setBytes(bytes);
+                recordings.setFilePath(fileDir + File.separator + name);
+
+                Tika tika = new Tika();
+                String fileType = tika.detect(bytes);
+                if (fileType.startsWith("audio/")) {
+                    recordings.setFileFormat(fileType.substring("audio/".length()));
+                } else {
+                    throw new IllegalArgumentException("Not an audio file: " + fileType);
+                }
+
+
+                recordingRepository.save(recordings);
+                return  recordings;
+
+
         }
-            String name = file.getOriginalFilename();
-            byte[] bytes = file.getBytes();
-            Recordings recordings = new Recordings();
-            recordings.setName(name);
-            recordings.setFormat(String.valueOf(format));
-            recordings.setDuration(duration);
-            recordings.setBytes(bytes);
-            recordings.setFilePath(fileDir + File.separator + name);
 
-            Tika tika = new Tika();
-            String fileType = tika.detect(bytes);
-            if (fileType.startsWith("audio/")) {
-                recordings.setFileFormat(fileType.substring("audio/".length()));
-            } else {
-                throw new IllegalArgumentException("Not an audio file: " + fileType);
-            }
+        public Optional<Recordings> getRecordingById(Long id) {
+            return recordingRepository.findById(id);
+        }
 
+        public void deleteRecordingById( Long id) {
+                recordingRepository.deleteById(id);
 
-            recordingRepository.save(recordings);
-            return  recordings;
+        }
 
-
-    }
-
-    public Optional<Recordings> getRecordingById(Long id) {
-        return recordingRepository.findById(id);
-    }
-
-    public void deleteRecordingById( Long id) {
-            recordingRepository.deleteById(id);
-
-    }
-
-    public byte[] getRecordingBytes(Recordings recordings) throws  Exception {
-        return  recordings.getBytes();
-    }
+        public byte[] getRecordingBytes(Recordings recordings) throws  Exception {
+            return  recordings.getBytes();
+        }
 
 //    public String getRecordingFileType(Recordings recordings) throws IOException, UnsupportedAudioFileException {
 //        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new ByteArrayInputStream(recordings.getBytes()));
