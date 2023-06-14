@@ -3,11 +3,17 @@ package com.programming.karaoke.service;
 import com.programming.karaoke.model.Recordings;
 import com.programming.karaoke.model.Video;
 import com.programming.karaoke.repository.RecordingRepository;
+import org.apache.commons.codec.EncoderException;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+//import ws.schild.jave.AudioAttributes;
+//import ws.schild.jave.Encoder;
+//import ws.schild.jave.EncoderException;
+//import ws.schild.jave.EncodingAttributes;
+//import ws.schild.jave.MultimediaObject;
 
 
 import javax.sound.sampled.*;
@@ -33,15 +39,15 @@ import java.util.UUID;
 //            recordings.set;
 //            recordingRepository.save(recordings);
 
-
-            Optional<Recordings> existingRecordOptional = recordingRepository.findById(0L);
-            if (existingRecordOptional.isPresent()) {
-                // Update the existing document with the new file bytes
-                Recordings existingRecord = existingRecordOptional.get();
-                existingRecord.setBytes(file.getBytes());
-                recordingRepository.save(existingRecord);
-                return existingRecord;
-            } else {
+                //Check if id is existed or not
+//            Optional<Recordings> existingRecordOptional = recordingRepository.findById(0L);
+//            if (existingRecordOptional.isPresent()) {
+//                // Update the existing document with the new file bytes
+//                Recordings existingRecord = existingRecordOptional.get();
+//                existingRecord.setBytes(file.getBytes());
+//                recordingRepository.save(existingRecord);
+//                return existingRecord;
+//            } else {
                 InputStream bufferedStream = new BufferedInputStream(file.getInputStream());
                 AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bufferedStream);
                 AudioFormat format = audioInputStream.getFormat();
@@ -73,12 +79,13 @@ import java.util.UUID;
                 }
 
 
+
                 recordingRepository.save(recordings);
                 return recordings;
 
 
             }
-        }
+//        }
 
 
 
@@ -94,6 +101,21 @@ import java.util.UUID;
         public byte[] getRecordingBytes(Recordings recordings) throws Exception {
             return  recordings.getBytes();
         }
+
+//    public void mergeAudio(String recordedSoundPath, String extractedAudioPath, String outputFilePath) throws EncoderException {
+//        MultimediaObject recordedSound = new MultimediaObject(new File(recordedSoundPath));
+//        MultimediaObject extractedAudio = new MultimediaObject(new File(extractedAudioPath));
+//
+//        AudioAttributes audioAttributes = new AudioAttributes();
+//        audioAttributes.setVolume(1.0);
+//
+//        EncodingAttributes encodingAttributes = new EncodingAttributes();
+//        encodingAttributes.setOutputFormat("mp3");
+//        encodingAttributes.setAudioAttributes(audioAttributes);
+//
+//        Encoder encoder = new Encoder();
+//        encoder.encode(recordedSound, extractedAudio, new File(outputFilePath), encodingAttributes);
+//    }
     }
 
 
@@ -101,75 +123,6 @@ import java.util.UUID;
 
 
 
-//    public String getRecordingFileType(Recordings recordings) throws IOException, UnsupportedAudioFileException {
-//        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new ByteArrayInputStream(recordings.getBytes()));
-//        AudioFormat format = audioInputStream.getFormat();
-//        AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(new ByteArrayInputStream(recordings.getBytes()));
-//        String fileExtension = "";
-//        if (fileFormat.getType() == AudioFileFormat.Type.WAVE) {
-//            fileExtension = "wav";
-//        } else if (fileFormat.getType() == AudioFileFormat.Type.AIFF) {
-//            fileExtension = "aiff";
-//        } else if (fileFormat.getType() == AudioFileFormat.Type.AU) {
-//            fileExtension = "au";
-//        } else if (fileFormat.getType() == AudioFileFormat.Type.SND) {
-//            fileExtension = "snd";
-//        }  else if (fileFormat.getType() == AudioFileFormat.Type.MPEG || fileFormat.getType() == AudioFileFormat.Type.MPEG_3) {
-//            fileExtension = "mp3";
-//        } else {
-//            // unsupported file type
-//            return "";
-//        }
-//        return fileExtension;
-//    }
-
-//    public String getRecordingFileType(AudioInputStream audioInputStream) throws UnsupportedAudioFileException, IOException {
-//        AudioFormat format = audioInputStream.getFormat();
-//        String fileExtension = "";
-//        if (format.getEncoding() == AudioFormat.Encoding.PCM_SIGNED) {
-//            switch (format.getChannels()) {
-//                case 1:
-//                    fileExtension = "wav";
-//                    break;
-//                case 2:
-//                    fileExtension = "wav";
-//                    break;
-//                default:
-//                    // unsupported channel count
-//                    return "";
-//            }
-//        } else if (format.getEncoding() == AudioFormat.Encoding.PCM_UNSIGNED) {
-//            switch (format.getChannels()) {
-//                case 1:
-//                    fileExtension = "au";
-//                    break;
-//                case 2:
-//                    fileExtension = "au";
-//                    break;
-//                default:
-//                    // unsupported channel count
-//                    return "";
-//            }
-//        } else if (format.getEncoding() == AudioFormat.Encoding.ALAW) {
-//            fileExtension = "snd";
-//        } else if (format.getEncoding() == AudioFormat.Encoding.ULAW) {
-//            fileExtension = "snd";
-//        } else if (format.getEncoding() == AudioFormat.Encoding.AIFF) {
-//            fileExtension = "aiff";
-//        } else if (format.getEncoding() == AudioFormat.Encoding.AU) {
-//            fileExtension = "au";
-//        } else if (format.getEncoding() == AudioFormat.Encoding.WAVE_PCM || format.getEncoding() == AudioFormat.Encoding.WAVE_FLOAT) {
-//            fileExtension = "wav";
-//        } else if (format.getEncoding() == AudioFormat.Encoding.VORBIS) {
-//            fileExtension = "ogg";
-//        } else if (format.getEncoding() == AudioFormat.Encoding.MP3) {
-//            fileExtension = "mp3";
-//        } else {
-//            // unsupported audio format
-//            return "";
-//        }
-//        return fileExtension;
-//    }
 
 
 

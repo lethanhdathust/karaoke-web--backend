@@ -3,17 +3,21 @@ package com.programming.karaoke.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Generated;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
+
 @Document(value = "recordings")
 
 
 public class Recordings {
 
     @Id
+
     private long id;
     private String name;
     private String format;
