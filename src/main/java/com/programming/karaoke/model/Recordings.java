@@ -17,14 +17,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Recordings {
 
     @Id
-
-    private long id;
+    private String id;
     private String name;
     private String format;
     private String filePath;
     private Long duration;
     private byte[] bytes;
     private String fileFormat;
+    private String recordUrl;
 
 
 //    public long getId() {

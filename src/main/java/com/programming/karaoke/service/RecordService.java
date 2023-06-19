@@ -29,30 +29,41 @@ import java.util.UUID;
         private String fileDir;
         @Autowired
         private S3Service s3Service;
-        public Recordings createRecording(MultipartFile file) throws Exception {
+        public Recordings createRecording(MultipartFile file, String fileDir) throws Exception {
+            AudioFormat audioFormat = new AudioFormat(44100, 16, 2, true, false);
+            DataLine.Info targetDataLineInfo = new DataLine.Info(TargetDataLine.class, audioFormat);
 
-//            //Conn to AWS
-//
-//            String videoUrl= s3Service.uploadFile(file);
-//            //Sau khi upload video lên aws , set url cho video ,rồi lưu vào database
-//            var recordings = new Recordings();
-//            recordings.set;
-//            recordingRepository.save(recordings);
+            if (!AudioSystem.isLineSupported(targetDataLineInfo)) {
+                throw new LineUnavailableException("Microphone is not supported.");
+            }
 
-                //Check if id is existed or not
-//            Optional<Recordings> existingRecordOptional = recordingRepository.findById(0L);
-//            if (existingRecordOptional.isPresent()) {
-//                // Update the existing document with the new file bytes
-//                Recordings existingRecord = existingRecordOptional.get();
-//                existingRecord.setBytes(file.getBytes());
-//                recordingRepository.save(existingRecord);
-//                return existingRecord;
-//            } else {
-                InputStream bufferedStream = new BufferedInputStream(file.getInputStream());
-                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bufferedStream);
-                AudioFormat format = audioInputStream.getFormat();
-                long duration = (long) (audioInputStream.getFrameLength() / format.getFrameRate() * 1000);
-                System.out.println("Current Working Directory: " + System.getProperty("user.dir"));
+            TargetDataLine targetDataLine = (TargetDataLine) AudioSystem.getLine(targetDataLineInfo);
+            targetDataLine.open(audioFormat);
+            targetDataLine.start();
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            int bufferSize = 4096;
+            byte[] buffer = new byte[bufferSize];
+
+            long startTime = System.currentTimeMillis();
+
+            System.out.println("Recording started.");
+
+            while (System.currentTimeMillis() - startTime < 5000) { // Adjust the duration of recording as needed
+                int bytesRead = targetDataLine.read(buffer, 0, buffer.length);
+                byteArrayOutputStream.write(buffer, 0, bytesRead);
+            }
+
+            System.out.println("Recording finished.");
+
+            targetDataLine.stop();
+            targetDataLine.close();
+
+            byte[] audioData = byteArrayOutputStream.toByteArray();
+
+
+
+
+
                 //Create Directory
                 File directory = new File(fileDir);
                 if (!directory.exists()) {
@@ -62,21 +73,14 @@ import java.util.UUID;
                     }
                 }
                 String name = file.getOriginalFilename();
-                byte[] bytes = file.getBytes();
+                String recordUrl= s3Service.uploadFile(file);
                 Recordings recordings = new Recordings();
+                recordings.setRecordUrl(recordUrl);
                 recordings.setName(name);
-                recordings.setFormat(String.valueOf(format));
-                recordings.setDuration(duration);
-                recordings.setBytes(bytes);
+                recordings.setFormat(audioFormat.toString());
+                recordings.setDuration(5000L);
+                recordings.setBytes(audioData);
                 recordings.setFilePath(fileDir + File.separator + name);
-
-                Tika tika = new Tika();
-                String fileType = tika.detect(bytes);
-                if (fileType.startsWith("audio/")) {
-                    recordings.setFileFormat(fileType.substring("audio/".length()));
-                } else {
-                    throw new IllegalArgumentException("Not an audio file: " + fileType);
-                }
 
 
 
@@ -89,11 +93,11 @@ import java.util.UUID;
 
 
 
-        public Optional<Recordings> getRecordingById(Long id) {
+        public Optional<Recordings> getRecordingById(String id) {
             return recordingRepository.findById(id);
         }
 
-        public void deleteRecordingById( Long id) {
+        public void deleteRecordingById( String id) {
                 recordingRepository.deleteById(id);
 
         }

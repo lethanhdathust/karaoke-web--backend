@@ -47,20 +47,19 @@ public class RecordController {
 
 
 @PostMapping("/createRecording")
-public ResponseEntity<?> createRecording(@RequestParam("file")MultipartFile file, @Value("${fileDir}") String fileDir) {
-    log.info("[createRecording] fileDir {}", fileDir);
+public ResponseEntity<String> createRecording(@RequestParam("file") MultipartFile file,
+                                              @RequestParam("fileDir") String fileDir) {
     try {
-        Recordings recordings = recordService.createRecording(file);
-        return ResponseEntity.ok().build();
+        Recordings createdRecording = recordService.createRecording(file, fileDir);
+        return ResponseEntity.ok("Recording created successfully. ID: " + createdRecording.getId());
     } catch (Exception e) {
-        log.error("[createRecording] Exception occurred: ", e);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create recording: " + e.getMessage());
     }
 }
 
     @GetMapping("/{id}/play")
     public ResponseEntity<byte[]> playRecording(@PathVariable("id") String id) {
-        Optional<Recordings> optionalRecordings = recordService.getRecordingById(Long.valueOf(id));
+        Optional<Recordings> optionalRecordings = recordService.getRecordingById(String.valueOf(id));
         if (optionalRecordings.isPresent()) {
             Recordings recordings = optionalRecordings.get();
             try {
@@ -81,7 +80,7 @@ public ResponseEntity<?> createRecording(@RequestParam("file")MultipartFile file
     @DeleteMapping("{id}/delete")
     public ResponseEntity<?> deleteRecording(@PathVariable("id") String id) {
         try {
-            recordService.deleteRecordingById(Long.valueOf(id));
+            recordService.deleteRecordingById(String.valueOf(id));
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -93,7 +92,7 @@ public ResponseEntity<?> createRecording(@RequestParam("file")MultipartFile file
     //
     @PostMapping("/{id}/beautify")
     public ResponseEntity<?> beautifyRecording(@PathVariable("id") String id) {
-        Optional<Recordings> optionalRecordings = recordService.getRecordingById(Long.valueOf(id));
+        Optional<Recordings> optionalRecordings = recordService.getRecordingById(String.valueOf(id));
         if (optionalRecordings.isPresent()) {
             Recordings recordings = optionalRecordings.get();
             try {
