@@ -1,5 +1,6 @@
 package com.programming.karaoke.service;
 
+import com.amazonaws.AmazonWebServiceRequest;
 import com.programming.karaoke.model.Recordings;
 import com.programming.karaoke.model.Video;
 import com.programming.karaoke.repository.RecordingRepository;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.sound.sampled.*;
 import java.io.*;
 import java.util.Optional;
+import java.util.Scanner;
 import java.util.UUID;
 
 @Service
@@ -29,66 +31,77 @@ import java.util.UUID;
         private String fileDir;
         @Autowired
         private S3Service s3Service;
-        public Recordings createRecording(MultipartFile file, String fileDir) throws Exception {
-            AudioFormat audioFormat = new AudioFormat(44100, 16, 2, true, false);
-            DataLine.Info targetDataLineInfo = new DataLine.Info(TargetDataLine.class, audioFormat);
+        private static final int READ_LIMIT = 1024 * 1024 * 1024;
+            public Recordings createRecording(MultipartFile file, String fileDir, String customName) throws Exception {
+                // Generate a unique name for the recorded file
+                Scanner scanner = new Scanner(System.in);
 
-            if (!AudioSystem.isLineSupported(targetDataLineInfo)) {
-                throw new LineUnavailableException("Microphone is not supported.");
-            }
+                customName = scanner.nextLine();
+                String uniqueName = UUID.randomUUID().toString() + "_" + customName; // Use a UUID to ensure uniqueness
 
-            TargetDataLine targetDataLine = (TargetDataLine) AudioSystem.getLine(targetDataLineInfo);
-            targetDataLine.open(audioFormat);
-            targetDataLine.start();
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            int bufferSize = 4096;
-            byte[] buffer = new byte[bufferSize];
+                // Save the file with the unique name
+                String filePath = fileDir + File.separator + uniqueName;
+                AudioFormat audioFormat = new AudioFormat(44100, 16, 2, true, false);
+                DataLine.Info targetDataLineInfo = new DataLine.Info(TargetDataLine.class, audioFormat);
 
-            long startTime = System.currentTimeMillis();
-
-            System.out.println("Recording started.");
-
-            while (System.currentTimeMillis() - startTime < 5000) { // Adjust the duration of recording as needed
-                int bytesRead = targetDataLine.read(buffer, 0, buffer.length);
-                byteArrayOutputStream.write(buffer, 0, bytesRead);
-            }
-
-            System.out.println("Recording finished.");
-
-            targetDataLine.stop();
-            targetDataLine.close();
-
-            byte[] audioData = byteArrayOutputStream.toByteArray();
-
-
-
-
-
-                //Create Directory
-                File directory = new File(fileDir);
-                if (!directory.exists()) {
-                    boolean created = directory.mkdirs();
-                    if (!created) {
-                        throw new IllegalStateException("Failed to create the directory: " + fileDir);
-                    }
+                if (!AudioSystem.isLineSupported(targetDataLineInfo)) {
+                    throw new LineUnavailableException("Microphone is not supported.");
                 }
-                String name = file.getOriginalFilename();
-                String recordUrl= s3Service.uploadFile(file);
-                Recordings recordings = new Recordings();
-                recordings.setRecordUrl(recordUrl);
-                recordings.setName(name);
-                recordings.setFormat(audioFormat.toString());
-                recordings.setDuration(5000L);
-                recordings.setBytes(audioData);
-                recordings.setFilePath(fileDir + File.separator + name);
+
+                TargetDataLine targetDataLine = (TargetDataLine) AudioSystem.getLine(targetDataLineInfo);
+                targetDataLine.open(audioFormat);
+                targetDataLine.start();
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+
+                int bufferSize = 4096;
+                byte[] buffer = new byte[bufferSize];
+
+                long startTime = System.currentTimeMillis();
+
+                System.out.println("Recording started.");
+
+                while (System.currentTimeMillis() - startTime < 5000) { // Adjust the duration of recording as needed
+                    int bytesRead = targetDataLine.read(buffer, 0, buffer.length);
+                    byteArrayOutputStream.write(buffer, 0, bytesRead);
+                }
+
+                System.out.println("Recording finished.");
+
+                targetDataLine.stop();
+                targetDataLine.close();
+
+                byte[] audioData = byteArrayOutputStream.toByteArray();
 
 
 
-                recordingRepository.save(recordings);
-                return recordings;
 
 
-            }
+                    //Create Directory
+                    File directory = new File(fileDir);
+                    if (!directory.exists()) {
+                        boolean created = directory.mkdirs();
+                        if (!created) {
+                            throw new IllegalStateException("Failed to create the directory: " + fileDir);
+                        }
+                    }
+                    String name = file.getOriginalFilename();
+                    String recordUrl= s3Service.uploadFile(file);
+                    Recordings recordings = new Recordings();
+                    recordings.setRecordUrl(recordUrl);
+                    recordings.setName(customName);
+                    recordings.setFormat(audioFormat.toString());
+                    recordings.setDuration(5000L);
+                    recordings.setBytes(audioData);
+                    recordings.setFilePath(filePath);
+
+
+
+                    recordingRepository.save(recordings);
+                    return recordings;
+
+
+                }
 //        }
 
 

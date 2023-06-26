@@ -17,6 +17,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Recordings {
 
     @Id
+
     private String id;
     private String name;
     private String format;

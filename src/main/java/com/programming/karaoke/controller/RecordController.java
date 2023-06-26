@@ -48,9 +48,10 @@ public class RecordController {
 
 @PostMapping("/createRecording")
 public ResponseEntity<String> createRecording(@RequestParam("file") MultipartFile file,
-                                              @RequestParam("fileDir") String fileDir) {
+                                              @RequestParam("fileDir") String fileDir,
+                                              @RequestParam("customName") String customName) {
     try {
-        Recordings createdRecording = recordService.createRecording(file, fileDir);
+        Recordings createdRecording = recordService.createRecording(file, fileDir,customName);
         return ResponseEntity.ok("Recording created successfully. ID: " + createdRecording.getId());
     } catch (Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create recording: " + e.getMessage());
