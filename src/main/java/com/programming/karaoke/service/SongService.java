@@ -47,10 +47,15 @@ public class SongService {
         soundFile.transferTo(soundFilePath);
 
         String beatFileName = "wav_sound"; // Set the beat file name
-        MultipartFile beatFile = new MockMultipartFile(beatFileName, beatFileName, null, new FileInputStream(new File("wav_sound" + File.separator + beatFileName)));
-        saveBeatFile(songFolderFullPath, beatFile);
+        String beatFilePath = "./wav_sound/" + beatFileName; // Specify the path to the "wav_sound" file
 
-        String lyricFileName = soundFileName.substring(0, soundFileName.lastIndexOf('.')) + ".lyric";
+        // Create the MockMultipartFile for the beat file
+        File beatFile = new File(beatFilePath);
+        FileInputStream beatFileInputStream = new FileInputStream(beatFile);
+        MultipartFile beatMultipartFile = new MockMultipartFile(beatFileName, beatFile.getName(), null, beatFileInputStream);
+        saveBeatFile(songFolderFullPath, beatMultipartFile);
+
+        String lyricFileName = "lyric"; // Set the lyric file name to "lyric"
         MultipartFile lyricFile = new MockMultipartFile(lyricFileName, lyricFileName, null, new FileInputStream(new File("lyric" + File.separator + lyricFileName)));
         saveLyricFile(songFolderFullPath, lyricFile);
 
