@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Song {
     @Id
     private String songId;
+    private String songName;
     private String songImg;
     private String songLyric;
     private Long songDuration;

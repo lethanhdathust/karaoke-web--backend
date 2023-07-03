@@ -2,8 +2,12 @@ from pydub import AudioSegment
 import os
 
 # Set the input and output folder paths
-input_folder = "sound"
-output_folder = "wav_sound"
+# input_folder = "sound"
+# output_folder = "wav_sound"
+
+
+input_folder = "mp3_raw"
+output_folder = "mp3_wav_sound"
 
 # Create the output folder if it doesn't exist
 if not os.path.exists(output_folder):
