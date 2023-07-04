@@ -11,75 +11,53 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
+
 @Service
 public class SongService {
     @Autowired
     private SongRepository songRepository;
 
-    @Value("${song.folder.path}")
-    private String songFolderPath;
+    public void createSong(MultipartFile songFile, MultipartFile imgFile, MultipartFile lyricFile) {
+        String originalSongFilename = songFile.getOriginalFilename();
+        String songName = originalSongFilename.substring(0, originalSongFilename.lastIndexOf("."));
 
-    public void createSongFolder(String songName) {
-        String songFolderName = songName.replaceAll("\\s+", ""); // Remove spaces from song name
-        File songFolder = new File(songFolderPath + File.separator + songFolderName);
-        if (!songFolder.exists()) {
-            songFolder.mkdirs();
-        }
-    }
+        String songFolderName = "songs" + File.separator + songName;
+        createSongFolderIfNotExists(songFolderName);
 
-    public void saveFiles(String songName, MultipartFile soundFile) throws IOException {
-        String songFolderName = songName.replaceAll("\\s+", ""); // Remove spaces from song name
-        String soundFileName = soundFile.getOriginalFilename();
+        String originalImgFilename = imgFile.getOriginalFilename();
+        String imgFilename = originalImgFilename != null ? originalImgFilename : "songImg.jpg";
+        saveFile(imgFile, songFolderName, imgFilename);
 
-        File songsFolder = new File(songFolderPath);
-        if (!songsFolder.exists()) {
-            songsFolder.mkdirs();
-        }
+        String originalLyricFilename = lyricFile.getOriginalFilename();
+        String lyricFilename = originalLyricFilename != null ? originalLyricFilename : "songLyric.txt";
+        saveFile(lyricFile, songFolderName, lyricFilename);
 
-        String songFolderFullPath = songsFolder.getAbsolutePath() + File.separator + songFolderName;
-
-        File songFolder = new File(songFolderFullPath);
-        if (!songFolder.exists()) {
-            songFolder.mkdirs();
-        }
-
-        File soundFilePath = new File(songFolder.getAbsolutePath() + File.separator + soundFileName);
-        soundFile.transferTo(soundFilePath);
-
-        String beatFileName = "wav_sound"; // Set the beat file name
-        String beatFilePath = "./wav_sound/" + beatFileName; // Specify the path to the "wav_sound" file
-
-        // Create the MockMultipartFile for the beat file
-        File beatFile = new File(beatFilePath);
-        FileInputStream beatFileInputStream = new FileInputStream(beatFile);
-        MultipartFile beatMultipartFile = new MockMultipartFile(beatFileName, beatFile.getName(), null, beatFileInputStream);
-        saveBeatFile(songFolderFullPath, beatMultipartFile);
-
-        String lyricFileName = "lyric"; // Set the lyric file name to "lyric"
-        MultipartFile lyricFile = new MockMultipartFile(lyricFileName, lyricFileName, null, new FileInputStream(new File("lyric" + File.separator + lyricFileName)));
-        saveLyricFile(songFolderFullPath, lyricFile);
-
-        saveSongToDatabase(songName, songFolderName);
-    }
-
-    private void saveLyricFile(String songFolderFullPath, MultipartFile lyricFile) throws IOException {
-        // Save the lyric file to the song folder
-        File lyricFilePath = new File(songFolderFullPath + File.separator + lyricFile.getOriginalFilename());
-        lyricFile.transferTo(lyricFilePath);
-    }
-
-    private void saveBeatFile(String songFolderFullPath, MultipartFile beatFile) throws IOException {
-        // Save the beat file to the song folder
-        File beatFilePath = new File(songFolderFullPath + File.separator + beatFile.getOriginalFilename());
-        beatFile.transferTo(beatFilePath);
-    }
-
-    private void saveSongToDatabase(String songName, String songFolderName) {
-        // Save the song details to the database using the SongRepository
         Song song = new Song();
         song.setSongName(songName);
-        song.setSongBeat(songFolderName); // Use the songBeat field to store the song folder name
+        song.setSongFolderName(songFolderName);
         // Set other song details as needed
         songRepository.save(song);
+    }
+
+    private void createSongFolderIfNotExists(String songFolderName) {
+        File songFolder = new File(songFolderName);
+        if (!songFolder.exists()) {
+            songFolder.mkdirs();
+        }
+    }
+
+    private void saveFile(MultipartFile file, String songFolderName, String fileName) {
+        try {
+            String filePath = songFolderName + File.separator + fileName;
+            File targetFile = new File(filePath);
+            file.transferTo(targetFile);
+        } catch (IOException e) {
+            // Handle any exceptions
+        }
+    }
+
+    public List<Song> getAllSongs() {
+        return songRepository.findAll();
     }
 }

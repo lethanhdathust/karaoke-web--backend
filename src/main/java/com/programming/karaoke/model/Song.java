@@ -10,10 +10,11 @@ public class Song {
     @Id
     private String songId;
     private String songName;
-    private String songImg;
-    private String songLyric;
+    private byte[] songImg;
+    private String songFolderName;
+    private byte[] songLyric;
     private Long songDuration;
     private String artist;
-    private String songBeat;
+    private byte[] songBeat;
     private String songFormat;
 }
