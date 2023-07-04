@@ -11,6 +11,7 @@ public class Song {
     private String songId;
     private String songName;
     private byte[] songImg;
+    private String genre;
     private String songFolderName;
     private byte[] songLyric;
     private Long songDuration;

@@ -18,11 +18,18 @@ public class SongController {
     private SongService songService;
 
     @PostMapping("/create")
-    public ResponseEntity<String> createSong(@RequestParam("songFile") MultipartFile songFile,
-                                             @RequestParam(value = "imgFile", required = false) MultipartFile imgFile,
-                                             @RequestParam(value = "lyricFile", required = false) MultipartFile lyricFile) {
-        songService.createSong(songFile, imgFile, lyricFile);
-        return ResponseEntity.ok("Song created successfully.");
+    public ResponseEntity<String> createSong(
+            @RequestPart("songFile") MultipartFile songFile,
+            @RequestPart(value = "imgFile", required = false) MultipartFile imgFile,
+            @RequestPart(value = "lyricFile", required = false) MultipartFile lyricFile,
+            @RequestBody Song song
+    ) {
+        try {
+            songService.createSong(songFile, imgFile, lyricFile, song);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Song created successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create song.");
+        }
     }
 
     @GetMapping("/getAllSongs")
