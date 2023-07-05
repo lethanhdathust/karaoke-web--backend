@@ -35,7 +35,7 @@ public class User implements UserDetails {
     private String fullName;
     private String emailAddress;
     private String telephoneNumber;
-    private String passWord;
+    private String password;
     private List<Token> tokens;
     @Field(targetType = FieldType.STRING)
     private Role role;
@@ -48,7 +48,7 @@ public class User implements UserDetails {
 
     @Override
     public String getPassword() {
-        return passWord;
+        return password;
     }
 
     @Override
