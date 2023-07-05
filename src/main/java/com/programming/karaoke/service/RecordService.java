@@ -4,6 +4,8 @@ import com.amazonaws.AmazonWebServiceRequest;
 import com.programming.karaoke.model.Recordings;
 import com.programming.karaoke.model.Video;
 import com.programming.karaoke.repository.RecordingRepository;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.apache.commons.codec.EncoderException;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,8 @@ import java.util.Scanner;
 import java.util.UUID;
 
 @Service
+@AllArgsConstructor
+@NoArgsConstructor
     public class RecordService {
         @Autowired
         private RecordingRepository recordingRepository;

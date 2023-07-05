@@ -12,8 +12,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 
 @Document(value = "recordings")
-
-
 public class Recordings {
 
     @Id

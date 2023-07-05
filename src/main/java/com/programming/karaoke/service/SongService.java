@@ -61,13 +61,13 @@ public class SongService {
         byte[] songBeat = songFile.getBytes();
         Long songDuration = extractSongDurationFromBeat(songBeat);
 
-        Song song = new Song();
+//        Song song = new Song();
 
         song.setSongName(songName);
         song.setSongFolderName(songFolderName);
-        song.setGenre(genre);
+//        song.setGenre(genre);
         song.setSongDuration(songDuration);
-        song.setArtist(artist);
+//        song.setArtist(artist);
         song.setSongBeat(songBeat);
 
 

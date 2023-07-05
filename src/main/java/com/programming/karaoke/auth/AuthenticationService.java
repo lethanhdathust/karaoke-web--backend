@@ -19,10 +19,17 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     public AuthenticationResponse register(RegisterRequest request) {
+        var x =  repository.findByEmailAddress(request.getEmailAddress());
+
+        if(x.isPresent())
+        {
+            return AuthenticationResponse.builder().token("Null").build();
+        }
         var user = User.builder()
-                .emailAddress(request.getEmail())
-                .fullName(request.getEmail())
-                .passWord(passwordEncoder.encode(request.getPassword()) )
+                .emailAddress(request.getEmailAddress())
+                .telephoneNumber(request.getTelephoneNumber())
+                .fullName(request.getFullName())
+                .password(passwordEncoder.encode(request.getPassword()) )
                 .role(Role.USER)
                 .build();
         repository.save(user);
