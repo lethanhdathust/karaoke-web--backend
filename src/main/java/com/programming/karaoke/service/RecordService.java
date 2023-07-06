@@ -36,15 +36,14 @@ import java.util.UUID;
         @Autowired
         private S3Service s3Service;
         private static final int READ_LIMIT = 1024 * 1024 * 1024;
-            public Recordings createRecording(MultipartFile file, String fileDir, String customName) throws Exception {
+            public Recordings createRecording(MultipartFile file, String fileDir) throws Exception {
                 // Generate a unique name for the recorded file
                 Scanner scanner = new Scanner(System.in);
 
-                customName = scanner.nextLine();
-                String uniqueName = UUID.randomUUID().toString() + "_" + customName; // Use a UUID to ensure uniqueness
+
 
                 // Save the file with the unique name
-                String filePath = fileDir + File.separator + uniqueName;
+
                 AudioFormat audioFormat = new AudioFormat(44100, 16, 2, true, false);
                 DataLine.Info targetDataLineInfo = new DataLine.Info(TargetDataLine.class, audioFormat);
 
@@ -78,35 +77,30 @@ import java.util.UUID;
                 byte[] audioData = byteArrayOutputStream.toByteArray();
 
 
-
-
-
-                    //Create Directory
-                    File directory = new File(fileDir);
-                    if (!directory.exists()) {
-                        boolean created = directory.mkdirs();
-                        if (!created) {
-                            throw new IllegalStateException("Failed to create the directory: " + fileDir);
-                        }
+                //Create Directory
+                File directory = new File(fileDir);
+                if (!directory.exists()) {
+                    boolean created = directory.mkdirs();
+                    if (!created) {
+                        throw new IllegalStateException("Failed to create the directory: " + fileDir);
                     }
-                    String name = file.getOriginalFilename();
-                    String recordUrl= s3Service.uploadFile(file);
-                    Recordings recordings = new Recordings();
-                    recordings.setRecordUrl(recordUrl);
-                    recordings.setName(customName);
-                    recordings.setFormat(audioFormat.toString());
-                    recordings.setDuration(5000L);
-                    recordings.setBytes(audioData);
-                    recordings.setFilePath(filePath);
-
-
-
-                    recordingRepository.save(recordings);
-                    return recordings;
-
-
                 }
-//        }
+                String name = file.getOriginalFilename();
+                String recordUrl = s3Service.uploadFile(file);
+                Recordings recordings = new Recordings();
+                recordings.setRecordUrl(recordUrl);
+                recordings.setName(name);
+                recordings.setFormat(audioFormat.toString());
+                recordings.setDuration(5000000L);
+                recordings.setBytes(audioData);
+
+
+
+                recordingRepository.save(recordings);
+                return recordings;
+
+
+            }
 
 
 

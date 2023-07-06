@@ -25,7 +25,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/recordings")
+@RequestMapping("api/recordings")
 @Slf4j
 public class RecordController {
 
@@ -48,10 +48,10 @@ public class RecordController {
 
 @PostMapping("/createRecording")
 public ResponseEntity<String> createRecording(@RequestParam("file") MultipartFile file,
-                                              @RequestParam("fileDir") String fileDir,
-                                              @RequestParam("customName") String customName) {
+                                              @RequestParam("fileDir") String fileDir
+                                              ) {
     try {
-        Recordings createdRecording = recordService.createRecording(file, fileDir,customName);
+        Recordings createdRecording = recordService.createRecording(file, fileDir);
         return ResponseEntity.ok("Recording created successfully. ID: " + createdRecording.getId());
     } catch (Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create recording: " + e.getMessage());
