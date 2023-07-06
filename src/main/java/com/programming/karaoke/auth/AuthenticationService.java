@@ -40,11 +40,11 @@ public class AuthenticationService {
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
+                        request.getEmailAddress(),
                         request.getPassword()
                 )
         );
-        var user = repository.findByEmailAddress(request.getEmail()).orElseThrow();
+        var user = repository.findByEmailAddress(request.getEmailAddress()).orElseThrow();
 
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder().token(jwtToken).build();
