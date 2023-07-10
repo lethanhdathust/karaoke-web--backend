@@ -8,51 +8,44 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/songs")
 public class SongController {
     @Autowired
     private SongService songService;
 
-    @GetMapping("/getAllSong")
-    public List<Song> getAllSongs() {
-        return songService.getAllSongs();
+public ResponseEntity<Song> createSong(@RequestParam("songBeat") MultipartFile songBeat,
+                                       @RequestParam("songImage") MultipartFile songImage,
+                                       @RequestParam("songVideo") MultipartFile songVideo,
+                                       @RequestParam("lyric") MultipartFile lyric,
+                                       String title,
+                                       String artist,
+                                       String genre) {
+    try {
+        Song song = songService.createSong(title, artist, genre, songImage, songBeat, songVideo, lyric);
+        return ResponseEntity.ok(song);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+    }
+}
+
+
+    @PutMapping("/songs/{songId}")
+    public ResponseEntity<Song> updateSong(@PathVariable String songId,
+                                           @RequestParam(required = false) String title,
+                                           @RequestParam(required = false) String artist,
+                                           @RequestParam(required = false) String genre,
+                                           @RequestParam(required = false) MultipartFile songImage,
+                                           @RequestParam(required = false) MultipartFile songBeat,
+                                           @RequestParam(required = false) MultipartFile songVideo,
+                                           @RequestParam(required = false) MultipartFile lyric) {
+        try {
+            Song updatedSong = songService.updateSong(songId, title, artist, genre, songImage, songBeat, songVideo, lyric);
+            return ResponseEntity.ok(updatedSong);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
-    @GetMapping("getSongById/{id}")
-    public Song getSongById(@PathVariable("id") String id) {
-        return songService.getSongById(id);
-    }
 
-    @PostMapping("createSong")
-    public Song createSong(@RequestPart("songImage") MultipartFile songImage,
-                           @RequestPart("songVideo") MultipartFile songVideo,
-                           @RequestPart("songBeat") MultipartFile songBeat,
-                           @RequestPart("song") Song song) {
-        song.setSongImage(songImage);
-        song.setSongVideo(songVideo);
-        song.setSongBeat(songBeat);
-        return songService.createSong(song);
-    }
-
-    @PutMapping("updateSong/{id}")
-    public Song updateSong(@PathVariable("id") String id,
-                           @RequestPart(value = "songImage", required = false) MultipartFile songImage,
-                           @RequestPart(value = "songVideo", required = false) MultipartFile songVideo,
-                           @RequestPart(value = "songBeat", required = false) MultipartFile songBeat,
-                           @RequestPart("song") Song song) {
-        song.setSongImage(songImage);
-        song.setSongVideo(songVideo);
-        song.setSongBeat(songBeat);
-        return songService.updateSong(id, song);
-    }
-
-    @DeleteMapping("delete/{id}")
-    public ResponseEntity<String> deleteSong(@PathVariable("id") String id) {
-        songService.deleteSong(id);
-        return ResponseEntity.ok("Song deleted successfully");
-    }
 }

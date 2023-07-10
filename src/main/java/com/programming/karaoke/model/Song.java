@@ -15,9 +15,10 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 public class Song {
     @Id
-    private String id;
+    private String songId;
     private String title;
     private String artist;
+    private MultipartFile lyric;
     private MultipartFile songImage;
     private MultipartFile songVideo;
     private MultipartFile songBeat;
