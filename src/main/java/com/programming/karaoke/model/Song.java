@@ -1,5 +1,7 @@
 package com.programming.karaoke.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @Document(value = "song")
-
+@NoArgsConstructor
+@AllArgsConstructor
 
 public class Song {
     @Id
@@ -18,64 +21,16 @@ public class Song {
     private String title;
     private String artist;
     private String genre;
-    private String imagePath;
-    private String videoPath;
+    private byte[] imageUrl;
+    private byte[] videoUrl;
+    private String songUrl;
 
-    public Song() {}
-
-    public Song(String title, String artist, String genre, String imagePath, String videoPath) {
-        this.title = title;
-        this.artist = artist;
-        this.genre = genre;
-        this.imagePath = imagePath;
-        this.videoPath = videoPath;
+    public static Song fromJson(String json) throws JsonProcessingException {
+        return new ObjectMapper().readValue(json, Song.class);
     }
 
-    public String getId() {
-        return id;
+    public String toJson() throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(this);
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getArtist() {
-        return artist;
-    }
-
-    public void setArtist(String artist) {
-        this.artist = artist;
-    }
-
-    public String getGenre() {
-        return genre;
-    }
-
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
-    public String getImagePath() {
-        return imagePath;
-    }
-
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
-    }
-
-    public String getVideoPath() {
-        return videoPath;
-    }
-
-    public void setVideoPath(String videoPath) {
-        this.videoPath = videoPath;
-    }
 }

@@ -33,6 +33,8 @@ public class Video {
     private String thumbnailUrl;
     private List<Comment> comments = new ArrayList<>();
 
+    private String artist;
+    private String genre;
 
 
 }
