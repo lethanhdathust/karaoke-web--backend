@@ -1,14 +1,17 @@
 package com.programming.karaoke.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.client.gridfs.GridFSBucket;
 import com.programming.karaoke.model.Song;
 import com.programming.karaoke.repository.SongRepository;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Base64;
 import java.util.List;
@@ -21,6 +24,8 @@ public class SongService {
     @Autowired
     private SongRepository songRepository;
     @Autowired
+    private GridFSBucket gridFSBucket;
+    @Autowired
     private  S3Service s3Service;
     public List<Song> getAllSongs() {
         return songRepository.findAll();
@@ -28,13 +33,20 @@ public class SongService {
 
     public void addSong(MultipartFile imageFile, MultipartFile videoFile, String songJson) throws IOException {
         Song song = Song.fromJson(songJson);
-        String videoUrl = s3Service.uploadFile(videoFile);
-        String imageUrl = s3Service.uploadFile(imageFile);
 
-        song.setImageUrl(imageFile.getBytes());
-        song.setVideoUrl(videoFile.getBytes());
+        InputStream imageStream = imageFile.getInputStream();
+        InputStream videoStream = videoFile.getInputStream();
+        // Create a new GridFS file for the image
+        ObjectId imageUrl = gridFSBucket.uploadFromStream(imageFile.getOriginalFilename(), imageStream);
+
+        // Create a new GridFS file for the video
+        ObjectId videoUrl = gridFSBucket.uploadFromStream(videoFile.getOriginalFilename(), videoStream);
+
+        song.setImageUrl(imageUrl.toHexString().getBytes());
+        song.setVideoUrl(videoUrl.toHexString().getBytes());
 
         songRepository.save(song);
+
     }
 
     public void updateSong(String id, File imageFile, File videoFile, String songJson) throws IOException {
