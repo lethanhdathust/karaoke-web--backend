@@ -27,7 +27,7 @@ public class Video {
     private AtomicInteger likes ;
     private AtomicInteger disLikes = new AtomicInteger(0);
     private List<String> tags;
-    private String url;
+    private String videoUrl;
     private VideoStatus videoStatus;
     private AtomicInteger viewCount = new AtomicInteger(0);
     private String thumbnailUrl;

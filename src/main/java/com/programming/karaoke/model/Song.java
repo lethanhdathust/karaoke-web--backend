@@ -10,6 +10,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Base64;
 
 @Data
@@ -23,29 +24,20 @@ public class Song {
     private String title;
     private String artist;
     private String genre;
-    private byte[] imageUrl;
-    private byte[] videoUrl;
-    private String songUrl;
+    private String imageUrl;
+    private String videoUrl;
 
-    public static Song fromJson(String json) throws JsonProcessingException {
-        return new ObjectMapper().readValue(json, Song.class);
-    }
-
-    public String toJson() throws JsonProcessingException {
-        return new ObjectMapper().writeValueAsString(this);
-    }
-
-    public String getImageUrlBase64() {
-        return Base64.getEncoder().encodeToString(this.imageUrl);
-    }
-
-    public void setImageUrlBase64(String imageUrlBase64) {
-        this.imageUrl = Base64.getDecoder().decode(imageUrlBase64);
-    }
-    public String getVideoUrlBase64() {
-        return Base64.getEncoder().encodeToString(this.videoUrl);
-    }
-    public void setVideoUrlBase64(String imageUrlBase64) {
-        this.videoUrl = Base64.getDecoder().decode(imageUrlBase64);
-    }
 }
+
+
+
+//    public static Song fromJson(String json) throws IOException {
+//        ObjectMapper mapper = new ObjectMapper();
+//        return mapper.readValue(json, Song.class);
+//    }
+//
+//    public String toJson() throws IOException {
+//        ObjectMapper mapper = new ObjectMapper();
+//        return mapper.writeValueAsString(this);
+//    }
+

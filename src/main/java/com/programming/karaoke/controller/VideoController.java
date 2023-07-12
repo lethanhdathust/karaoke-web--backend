@@ -1,6 +1,7 @@
 package com.programming.karaoke.controller;
 
 
+import com.programming.karaoke.model.UploadVideoResponse;
 import com.programming.karaoke.model.Video;
 import com.programming.karaoke.model.VideoDto;
 import com.programming.karaoke.service.VideoServices;
@@ -13,31 +14,41 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@RequiredArgsConstructor
 @RestController
-@RequestMapping("api/videos")
+@RequestMapping("/api/videos")
+@RequiredArgsConstructor
 public class VideoController {
-    private final VideoServices videoServices;
-    @PostMapping("/post")
+
+    private final VideoServices videoService;
+
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void uploadVideo(@RequestParam("file")MultipartFile file)
-    {
-        videoServices.uploadVideo(file);
+    public UploadVideoResponse uploadVideo(@RequestParam("file") MultipartFile file) {
+        return videoService.uploadVideo(file);
     }
-    @PutMapping("/edit")
-      @ResponseStatus(HttpStatus.OK)
-      public VideoDto editVideoMetadata(@RequestBody VideoDto videoDto){
 
-        return  videoServices.editVideo(videoDto);
-//        return videoServices.saveVideo(videoDto);
-  //      return videoDto;
-      }
+    @PostMapping("/thumbnail")
+    @ResponseStatus(HttpStatus.CREATED)
+    public String uploadThumbnail(@RequestParam("file") MultipartFile file, @RequestParam("videoId") String videoId) {
+        return videoService.uploadThumbnail(file, videoId);
+    }
 
-//    @GetMapping("/search")
-//    public ResponseEntity<List<Video>> search(@RequestParam String query) {
-//        List<Video> videos = videoServices.search(query);
-//        return new ResponseEntity<>(videos, HttpStatus.OK);
-//    }
+    @PutMapping
+    @ResponseStatus(HttpStatus.OK)
+    public VideoDto editVideoMetadata(@RequestBody VideoDto videoDto) {
+        return videoService.editVideo(videoDto);
+    }
 
+
+
+
+
+
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<VideoDto> getAllVideos() {
+        return videoService.getAllVideos();
+    }
 
 }

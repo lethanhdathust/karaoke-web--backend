@@ -17,7 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/songs")
@@ -28,36 +31,43 @@ public class SongController {
 
     @GetMapping("/getAllSongs")
     public List<Song> getAllSongs() {
-        List<Song> songs = songService.getAllSongs();
-        for (Song song : songs) {
-            song.setImageUrlBase64(song.getImageUrlBase64());
-            song.setVideoUrlBase64(song.getVideoUrlBase64());
+        return songService.getAllSongs();
+    }
+
+    @GetMapping("getSong/{id}")
+    public ResponseEntity<Song> getSongById(@PathVariable String id) {
+        Song song = songService.getSongById(id);
+        if (song == null) {
+            return ResponseEntity.notFound().build();
         }
-        return songs;
+        return ResponseEntity.ok(song);
     }
 
-    @PostMapping(value = "/add",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public void addSong(@RequestParam("image") MultipartFile imageFile,
-                        @RequestParam("video") MultipartFile videoFile,
-                        @RequestParam("song") String songJson) throws IOException {
-        songService.addSong(imageFile, videoFile, songJson);
-
+    @PostMapping("/add")
+    public ResponseEntity<Song> createSong(@ModelAttribute Song song, @RequestParam("image") MultipartFile imageFile, @RequestParam("video") MultipartFile videoFile) throws IOException {
+        Song savedSong = songService.createSong(song, imageFile, videoFile);
+        try {
+            return ResponseEntity.created(new URI("/songs/" + savedSong.getId())).body(savedSong);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Failed to create URI for song", e);
+        }
     }
-    @PutMapping(value = "update/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public void updateSong(@PathVariable String id,
-                           @RequestParam(value = "image", required = false) File imageFile,
-                           @RequestParam(value = "video", required = false) File videoFile,
-                           @RequestParam("song") String songJson) throws IOException {
-        songService.updateSong(id, imageFile, videoFile, songJson);
+
+    @PutMapping("update/{id}")
+    public ResponseEntity<Song> updateSong(@PathVariable String id, @ModelAttribute Song song) {
+        Song updatedSong = songService.updateSong(id, song);
+        if (updatedSong == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updatedSong);
     }
 
     @DeleteMapping("delete/{id}")
-    public void deleteSong(@PathVariable String id) {
-        songService.deleteSong(id);
-    }
-
-    @GetMapping("/search")
-    public List<Song> searchSongs(@RequestParam("title") String title, @RequestParam("artist") String artist) {
-        return songService.searchSongs(title, artist);
+    public ResponseEntity<Void> deleteSong(@PathVariable String id) {
+        boolean deleted = songService.deleteSong(id);
+        if (!deleted) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.noContent().build();
     }
 }
