@@ -42,8 +42,8 @@ public class SongService {
         // Create a new GridFS file for the video
         ObjectId videoUrl = gridFSBucket.uploadFromStream(videoFile.getOriginalFilename(), videoStream);
 
-        song.setImageUrl(imageUrl.toHexString().getBytes());
-        song.setVideoUrl(videoUrl.toHexString().getBytes());
+        song.setImageUrl(imageUrl.toByteArray());
+        song.setVideoUrl(videoUrl.toByteArray());
 
         songRepository.save(song);
 
@@ -69,5 +69,9 @@ public class SongService {
 
     public void deleteSong(String id) {
         songRepository.deleteById(id);
+    }
+
+    public List<Song> searchSongs(String title, String artist) {
+        return songRepository.findByTitleAndArtist(title, artist);
     }
 }

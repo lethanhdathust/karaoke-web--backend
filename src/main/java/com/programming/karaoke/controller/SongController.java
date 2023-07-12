@@ -28,7 +28,12 @@ public class SongController {
 
     @GetMapping("/getAllSongs")
     public List<Song> getAllSongs() {
-        return songService.getAllSongs();
+        List<Song> songs = songService.getAllSongs();
+        for (Song song : songs) {
+            song.setImageUrlBase64(song.getImageUrlBase64());
+            song.setVideoUrlBase64(song.getVideoUrlBase64());
+        }
+        return songs;
     }
 
     @PostMapping(value = "/add",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -49,5 +54,10 @@ public class SongController {
     @DeleteMapping("delete/{id}")
     public void deleteSong(@PathVariable String id) {
         songService.deleteSong(id);
+    }
+
+    @GetMapping("/search")
+    public List<Song> searchSongs(@RequestParam("title") String title, @RequestParam("artist") String artist) {
+        return songService.searchSongs(title, artist);
     }
 }

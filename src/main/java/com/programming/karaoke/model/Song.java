@@ -10,6 +10,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Base64;
+
 @Data
 @Document(value = "song")
 @NoArgsConstructor
@@ -33,4 +35,17 @@ public class Song {
         return new ObjectMapper().writeValueAsString(this);
     }
 
+    public String getImageUrlBase64() {
+        return Base64.getEncoder().encodeToString(this.imageUrl);
+    }
+
+    public void setImageUrlBase64(String imageUrlBase64) {
+        this.imageUrl = Base64.getDecoder().decode(imageUrlBase64);
+    }
+    public String getVideoUrlBase64() {
+        return Base64.getEncoder().encodeToString(this.videoUrl);
+    }
+    public void setVideoUrlBase64(String imageUrlBase64) {
+        this.videoUrl = Base64.getDecoder().decode(imageUrlBase64);
+    }
 }
