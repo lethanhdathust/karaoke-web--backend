@@ -1,20 +1,13 @@
 package com.programming.karaoke.service;
 
 import com.programming.karaoke.model.Song;
-import com.programming.karaoke.model.SongDTO;
 import com.programming.karaoke.repository.SongRepository;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class SongService {
@@ -30,6 +23,13 @@ public class SongService {
 
     public Song getSongById(String id) {
         return songRepository.findById(id).orElse(null);
+    }
+
+    public List<Song> searchSongs(String query) {
+        return songRepository.findByTitleContainingIgnoreCaseOrArtistContainingIgnoreCase(query, query);
+    }
+    public List<Song> getSongsByGenre(String genre) {
+        return songRepository.findByGenre(genre);
     }
 
     public Song createSong(Song song, MultipartFile imageFile, MultipartFile videoFile) throws IOException {

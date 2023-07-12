@@ -9,8 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface SongRepository extends MongoRepository<Song, String> {
-    List<Song> findByTitleContainingIgnoreCase(String keyword);
-    List<Song> findByTitleAndArtist(String title, String artist);
+    List<Song> findByTitleContainingIgnoreCaseOrArtistContainingIgnoreCase(String title, String artist);
     List<Song> findByGenre(String genre);
     Optional<Song> findByTitle(String title);
 }

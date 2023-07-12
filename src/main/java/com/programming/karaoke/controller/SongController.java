@@ -33,6 +33,10 @@ public class SongController {
     public List<Song> getAllSongs() {
         return songService.getAllSongs();
     }
+    @GetMapping("")
+    public List<Song> getSongsByGenre(@PathVariable String genre) {
+        return songService.getSongsByGenre(genre);
+    }
 
     @GetMapping("getSong/{id}")
     public ResponseEntity<Song> getSongById(@PathVariable String id) {
@@ -69,5 +73,9 @@ public class SongController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/search")
+    public List<Song> searchSongs(@RequestParam("q") String query) {
+        return songService.searchSongs(query);
     }
 }
