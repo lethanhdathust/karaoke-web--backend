@@ -32,9 +32,13 @@ public class SongService {
         return songRepository.findByGenre(genre);
     }
 
-    public Song createSong(Song song, MultipartFile imageFile, MultipartFile videoFile) throws IOException {
+    public Song createSong(Song song, MultipartFile imageFile, MultipartFile videoFile, MultipartFile beatFile, MultipartFile lyricFile) throws IOException {
         String imageUrl = s3Service.uploadFile(imageFile);
         String videoUrl = s3Service.uploadFile(videoFile);
+        String beatUrl = s3Service.uploadFile(beatFile);
+        String lyric = s3Service.uploadFile(lyricFile);
+        song.setLyric(lyric);
+        song.setBeatUrl(beatUrl);
         song.setImageUrl(imageUrl);
         song.setVideoUrl(videoUrl);
         return songRepository.save(song);

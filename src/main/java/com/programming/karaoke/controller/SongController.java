@@ -33,7 +33,7 @@ public class SongController {
     public List<Song> getAllSongs() {
         return songService.getAllSongs();
     }
-    @GetMapping("")
+    @GetMapping("/{genre}")
     public List<Song> getSongsByGenre(@PathVariable String genre) {
         return songService.getSongsByGenre(genre);
     }
@@ -48,8 +48,13 @@ public class SongController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Song> createSong(@ModelAttribute Song song, @RequestParam("image") MultipartFile imageFile, @RequestParam("video") MultipartFile videoFile) throws IOException {
-        Song savedSong = songService.createSong(song, imageFile, videoFile);
+    public ResponseEntity<Song> createSong(@ModelAttribute Song song,
+                                           @RequestParam("image") MultipartFile imageFile,
+                                           @RequestParam("video") MultipartFile videoFile,
+                                           @RequestParam("beat") MultipartFile beatFile,
+                                           @RequestParam("lyric") MultipartFile lyricFile
+                                           ) throws IOException {
+        Song savedSong = songService.createSong(song, imageFile, videoFile, beatFile, lyricFile);
         try {
             return ResponseEntity.created(new URI("/songs/" + savedSong.getId())).body(savedSong);
         } catch (URISyntaxException e) {

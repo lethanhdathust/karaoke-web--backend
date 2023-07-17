@@ -26,18 +26,11 @@ public class Song {
     private String genre;
     private String imageUrl;
     private String videoUrl;
+    private String beatUrl;
+    private String lyric;
 
 }
 
 
 
-//    public static Song fromJson(String json) throws IOException {
-//        ObjectMapper mapper = new ObjectMapper();
-//        return mapper.readValue(json, Song.class);
-//    }
-//
-//    public String toJson() throws IOException {
-//        ObjectMapper mapper = new ObjectMapper();
-//        return mapper.writeValueAsString(this);
-//    }
 
